@@ -33,49 +33,62 @@ class Menu extends Phaser.Scene{
         //Left Side
         this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
         this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
-        this.add.image(138, 310, bats[selectedBat]);
-        this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
-        this.add.text(145, 400, '-->', {font: "20px"});
+        this.player1BatImage = this.add.image(138, 310, this.bats[this.selectedBat]);
+        this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
+        this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
 
         //Right Side
         this.add.text(610, 150, 'Player 2', {font: "25px Impact"});
         this.add.text(608, 190, 'Bat Colour', {font: "20px Impact"});
         this.add.image(648, 310, 'bat1');
 
-        this.add.text(270, 10, 'Pong Game', {font: "60px Impact"});
-        this.add.text(270, 10, 'Pong Game', {font: "60px Impact"});
-        this.add.text(270, 10, 'Pong Game', {font: "60px Impact"});
+        //Ball colour
+        this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
+        this.ballImage = this.add.image(400, 510, this.balls[this.selectedBall]);
+        this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
+        this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
+
         this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.scene.start("GameScreen"));
         this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);        
-
-        //Decide to use this or not.
-        // var tween = this.tweens.add({
-        //     targets: this.playButton,
-        //     x:360,
-        //     y:200,
-        //     duration:2000,
-        //     ease:"Elastic",
-        //     easeParams:[1.5, 0.5],
-        //     delay:1000
-        // },this);
-        
-        // this.add.image(200, 200, 'ball2');
-        // this.add.image(300, 300, 'ball3');
-        // this.add.image(400, 400, 'ball4');
-        // this.add.image(500, 500, 'ball5');
-
-        // this.add.image(200, 100, 'bat1');
-        // this.add.image(300, 200, 'bat2');
-        // this.add.image(400, 300, 'bat3');
-        // this.add.image(500, 400, 'bat4');
-        // this.add.image(600, 500, 'bat5');
-    }
-
-    selectNextBat(){
-        
     }
 
     update(delta){
 
     }
+
+    selectNextBat(){
+        if(this.selectedBat == 4){
+            this.selectedBat = 0;
+        }else{
+            this.selectedBat++;
+        }
+        this.player1BatImage = this.add.image(138, 310, this.bats[this.selectedBat]);
+    }
+
+    selectPreviousBat(){
+        if(this.selectedBat == 0){
+            this.selectedBat = 4;
+        }else{
+            this.selectedBat--;
+        }
+        this.player1BatImage = this.add.image(138, 310, this.bats[this.selectedBat]);
+    }
+
+    selectNextBall(){
+        if(this.selectedBall == 4){
+            this.selectedBall = 0;
+        }else{
+            this.selectedBall++;
+        }
+        this.ballImage == this.add.image(400, 510, this.balls[this.selectedBall]);
+    }
+
+    selectPreviousBall(){
+        if(this.selectedBall == 0){
+            this.selectedBall == 4;
+        }else{
+            this.selectedBall--;
+        }
+        this.ballImage == this.add.image(400, 510, this.balls[this.selectedBall]);
+    }    
 }

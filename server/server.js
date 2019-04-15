@@ -3,8 +3,9 @@ const PORT = 55000;
 var server = require('http').createServer();
 var io = require('socket.io')(server);
 
+//Runs when connection to server is established. 
 io.on('connection', function(client) {
-    
+    console.log("Player Joined.");
     client.on('test', function() {
         console.log('test received');
     });
