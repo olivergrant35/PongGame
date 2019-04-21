@@ -17,8 +17,11 @@ class Menu extends Phaser.Scene{
     }
 
     create(){
-        this.bats = ["bat1", "bat2", "bat3", "bat4", "bat5"];
-        this.balls = ["ball1", "ball2", "ball3", "ball4", "ball5"];
+        //Test to check if client is connected to server.
+        this.input.keyboard.on('keyup_T', function(event){
+            Client.sendTest();
+        });        
+        
         this.selectedBat = 0;
         this.selectedBall = 0;
 
@@ -33,7 +36,7 @@ class Menu extends Phaser.Scene{
         //Left Side
         this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
         this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
-        this.player1BatImage = this.add.image(138, 310, this.bats[this.selectedBat]);
+        this.player1BatImage = this.add.image(138, 310, bats[this.selectedBat]);
         this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
         this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
 
@@ -44,16 +47,21 @@ class Menu extends Phaser.Scene{
 
         //Ball colour
         this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
-        this.ballImage = this.add.image(400, 510, this.balls[this.selectedBall]);
+        this.ballImage = this.add.image(400, 510, balls[this.selectedBall]);
         this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
         this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
 
-        this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.scene.start("GameScreen"));
-        this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);        
+        this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.startGameScreen());
+        this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);
     }
 
     update(delta){
 
+    }
+
+    startGameScreen(){
+        player1SelectedBat = this.selectedBat;    
+        this.scene.start("GameScreen");
     }
 
     selectNextBat(){
