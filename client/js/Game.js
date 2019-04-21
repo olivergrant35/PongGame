@@ -13,10 +13,6 @@ var config = {
 
 var Game = new Phaser.Game(config);
 
-var player1SelectedBat;
-var player2SelectedBat;
-
-
 //Original code given.
 
 // var Game = {};

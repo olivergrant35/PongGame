@@ -3,6 +3,7 @@ class GameScreen extends Phaser.Scene{
         super({key:"GameScreen"});
     }
 
+    //Don't think this is needed as assets are loaded in Menu Scene.
     preload(){
 
     }
