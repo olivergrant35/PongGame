@@ -7,19 +7,34 @@ Client.sendTest = function(){
 };
 
 Client.askNewPlayer = function(){
-    console.log("New player");
     Client.socket.emit('newplayer');
 };
 
+//Won't need. 
 Client.sendClick = function(x,y){
     console.log("Send Click");
-  Client.socket.emit('click',{x:x,y:y});
+    Client.socket.emit('click',{x:x,y:y});
 };
+
+Client.playerNumber = function(){
+    Client.socket.emit('playerNumber');
+};
+
+Client.socket.on('connected', function(){
+    console.log("You are connected");
+    globalVars.isConnected = true;
+});
+
+Client.socket.on('playerNumber', function(num){
+    console.log("You are player number: " + num);
+    globalVars.playerNumber = num; 
+});
 
 Client.socket.on('newplayer',function(data){
     console.log("socket new player");
     Game.addNewPlayer(data.id,data.x,data.y);
 });
+
 
 Client.socket.on('allplayers',function(data){
     console.log("socket All players");
@@ -39,6 +54,5 @@ Client.socket.on('allplayers',function(data){
 
     Client.socket.on('gameFull', function(){
         console.log("Recived Game Full.");
-        
     });
 });

@@ -3,28 +3,36 @@ const PORT = 55000;
 var server = require('http').createServer();
 var io = require('socket.io')(server);
 
+var PlayerID = 1;
+var player1SelectedBat;
+var player2SelectedBat;
+
 //Runs when connection to server is established. 
 io.on('connection', function(client) {
-    console.log("Connection Received.");
+    client.emit('connected');
     client.on('test', function() {
         console.log('test received');
     });
     
     client.on('newplayer',function() {
-        console.log("new player request received.");
-        if(server.PlayerID <= 2){
+        console.log("New player request received.");
+        if(PlayerID <= 2){
             client.player = {
-                id: server.PlayerID,
+                id: PlayerID,
                 x: randomInt(100,400),
                 y: randomInt(100,400)
             };
             PlayerID++;
-            client.emit('allplayers',getAllPlayers());
-            client.broadcast.emit('newplayer',client.player);
+            // client.emit('allplayers',getAllPlayers());
+            // client.broadcast.emit('newplayer',client.player);
         }else{
             console.log("Player tried joining, game full.");
             client.emit('gameFull');
-        }    
+        }
+
+        client.on('playerNumber', function(){
+            client.emit('playerNumber', client.player.id);
+        });
 
         client.on('click',function(data) {
             console.log('click to '+data.x+', '+data.y);
@@ -35,6 +43,7 @@ io.on('connection', function(client) {
 
         client.on('disconnect',function() {
             io.emit('remove', client.player.id);
+            PlayerID--;
             console.log('disconnecting: ' + client.player.id);
         });
 
@@ -48,10 +57,6 @@ io.on('connection', function(client) {
 server.listen(PORT, function(){
     console.log('Listening on ' + server.address().port);
 });
-
-server.PlayerID = 1;
-server.player1SelectedBat;
-server.player2SelectedBat;
 
 function getAllPlayers(){
     console.log("getAllPlayers");

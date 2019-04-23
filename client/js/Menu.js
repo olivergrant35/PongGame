@@ -23,14 +23,12 @@ class Menu extends Phaser.Scene{
         });
 
         Client.askNewPlayer();
-        
+        Client.playerNumber();
+
+        console.log("Player number: " + globalVars.playerNumber);
+
         this.selectedBat = 0;
         this.selectedBall = 0;
-
-        this.input.keyboard.on('keyup_P', function(event){
-            var physicsImage = this.physics.add.image(this.ball.x, this.ball.y, 'ball1');
-            physicsImage.setVelocity(Phaser.Math.RND.integerInRange(-100, 100), -300);
-        }, this);
 
         //Title
         this.add.text(270, 10, 'Pong Game', {font: "60px Impact"});
