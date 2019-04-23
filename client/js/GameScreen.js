@@ -14,6 +14,6 @@ class GameScreen extends Phaser.Scene{
     }
 
     update(delta){
-
+        
     }
 }

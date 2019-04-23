@@ -20,7 +20,9 @@ class Menu extends Phaser.Scene{
         //Test to check if client is connected to server.
         this.input.keyboard.on('keyup_T', function(event){
             Client.sendTest();
-        });        
+        });
+
+        Client.askNewPlayer();
         
         this.selectedBat = 0;
         this.selectedBall = 0;
@@ -36,7 +38,7 @@ class Menu extends Phaser.Scene{
         //Left Side
         this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
         this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
-        this.player1BatImage = this.add.image(138, 310, bats[this.selectedBat]);
+        this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
         this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
         this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
 
@@ -47,7 +49,7 @@ class Menu extends Phaser.Scene{
 
         //Ball colour
         this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
-        this.ballImage = this.add.image(400, 510, balls[this.selectedBall]);
+        this.ballImage = this.add.image(400, 510, globalVars.balls[this.selectedBall]);
         this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
         this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
 
@@ -60,7 +62,7 @@ class Menu extends Phaser.Scene{
     }
 
     startGameScreen(){
-        player1SelectedBat = this.selectedBat;    
+        player1SelectedBat = this.selectedBat;
         this.scene.start("GameScreen");
     }
 
@@ -70,7 +72,7 @@ class Menu extends Phaser.Scene{
         }else{
             this.selectedBat++;
         }
-        this.player1BatImage = this.add.image(138, 310, this.bats[this.selectedBat]);
+        this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
     }
 
     selectPreviousBat(){
@@ -79,7 +81,7 @@ class Menu extends Phaser.Scene{
         }else{
             this.selectedBat--;
         }
-        this.player1BatImage = this.add.image(138, 310, this.bats[this.selectedBat]);
+        this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
     }
 
     selectNextBall(){
@@ -88,7 +90,7 @@ class Menu extends Phaser.Scene{
         }else{
             this.selectedBall++;
         }
-        this.ballImage == this.add.image(400, 510, this.balls[this.selectedBall]);
+        this.ballImage == this.add.image(400, 510, globalVars.balls[this.selectedBall]);
     }
 
     selectPreviousBall(){
@@ -97,6 +99,10 @@ class Menu extends Phaser.Scene{
         }else{
             this.selectedBall--;
         }
-        this.ballImage == this.add.image(400, 510, this.balls[this.selectedBall]);
-    }    
+        this.ballImage == this.add.image(400, 510, globalVars.balls[this.selectedBall]);
+    }
+
+    gameFull(){
+        window.alert("Game Full");
+    }
 }
