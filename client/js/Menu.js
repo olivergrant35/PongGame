@@ -24,6 +24,8 @@ class Menu extends Phaser.Scene{
 
         Client.askNewPlayer();
         Client.playerNumber();
+        
+        //TODO: Need to hold the program here to load. Will need to connect to server first.
 
         console.log("Player number: " + globalVars.playerNumber);
 
@@ -37,8 +39,14 @@ class Menu extends Phaser.Scene{
         this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
         this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
         this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
-        this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
-        this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
+        if(globalVars.playerNumber == 1){
+            this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
+            this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
+        }else{
+            //TODO: Change location of this. 
+            this.add.text(400, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
+            this.add.text(500, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
+        }
 
         //Right Side
         this.add.text(610, 150, 'Player 2', {font: "25px Impact"});

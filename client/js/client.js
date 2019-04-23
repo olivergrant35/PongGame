@@ -26,7 +26,6 @@ Client.socket.on('connected', function(){
 });
 
 Client.socket.on('playerNumber', function(num){
-    console.log("You are player number: " + num);
     globalVars.playerNumber = num; 
 });
 
