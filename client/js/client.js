@@ -39,5 +39,6 @@ Client.socket.on('allplayers',function(data){
 
     Client.socket.on('gameFull', function(){
         console.log("Recived Game Full.");
+        
     });
 });
