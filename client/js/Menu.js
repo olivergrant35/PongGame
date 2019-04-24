@@ -22,11 +22,6 @@ class Menu extends Phaser.Scene{
             Client.sendTest();
         });
 
-        Client.askNewPlayer();
-        Client.playerNumber();
-        
-        //TODO: Need to hold the program here to load. Will need to connect to server first.
-
         console.log("Player number: " + globalVars.playerNumber);
 
         this.selectedBat = 0;
@@ -40,26 +35,28 @@ class Menu extends Phaser.Scene{
         this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
         this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
         if(globalVars.playerNumber == 1){
+            //Bat selectors.
             this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
             this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
-        }else{
-            //TODO: Change location of this. 
-            this.add.text(400, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
-            this.add.text(500, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
+            //Ball selectors.
+            this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
+            this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
+            this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.startGameScreen());
+        }else if(globalVars.playerNumber == 2){
+            //Bat selectors. 
+            this.add.text(602, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
+            this.add.text(655, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
         }
 
         //Right Side
         this.add.text(610, 150, 'Player 2', {font: "25px Impact"});
         this.add.text(608, 190, 'Bat Colour', {font: "20px Impact"});
-        this.add.image(648, 310, 'bat1');
+        this.add.image(648, 310, globalVars.bats[]);
 
         //Ball colour
         this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
-        this.ballImage = this.add.image(400, 510, globalVars.balls[this.selectedBall]);
-        this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
-        this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
+        this.ballImage = this.add.image(400, 510, globalVars.balls[this.selectedBall])
 
-        this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.startGameScreen());
         this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);
     }
 
@@ -78,7 +75,11 @@ class Menu extends Phaser.Scene{
         }else{
             this.selectedBat++;
         }
-        this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+        if(globalVars.playerNumber == 1){
+            this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+        }else{
+            this.add.image(648, 310, globalVars.bats[this.selectedBat]);
+        }
     }
 
     selectPreviousBat(){
@@ -87,7 +88,11 @@ class Menu extends Phaser.Scene{
         }else{
             this.selectedBat--;
         }
-        this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+        if(globalVars.playerNumber == 1){
+            this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+        }else{
+            this.add.image(648, 310, globalVars.bats[this.selectedBat]);
+        }
     }
 
     selectNextBall(){
@@ -106,9 +111,5 @@ class Menu extends Phaser.Scene{
             this.selectedBall--;
         }
         this.ballImage == this.add.image(400, 510, globalVars.balls[this.selectedBall]);
-    }
-
-    gameFull(){
-        window.alert("Game Full");
     }
 }

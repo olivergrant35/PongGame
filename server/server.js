@@ -18,9 +18,7 @@ io.on('connection', function(client) {
         console.log("New player request received.");
         if(PlayerID <= 2){
             client.player = {
-                id: PlayerID,
-                x: randomInt(100,400),
-                y: randomInt(100,400)
+                id: PlayerID
             };
             PlayerID++;
             // client.emit('allplayers',getAllPlayers());
@@ -31,7 +29,11 @@ io.on('connection', function(client) {
         }
 
         client.on('playerNumber', function(){
-            client.emit('playerNumber', client.player.id);
+            if(client.player == null){
+                client.emit('playerNumber', -1);
+            }else{
+                client.emit('playerNumber', client.player.id);   
+            }            
         });
 
         client.on('click',function(data) {
@@ -51,7 +53,6 @@ io.on('connection', function(client) {
             console.log("getPlayerBat " + client.player.id);
         });
     });
-    
 });
 
 server.listen(PORT, function(){
