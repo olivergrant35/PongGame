@@ -49,8 +49,9 @@ io.on('connection', function(client) {
             console.log('disconnecting: ' + client.player.id);
         });
 
-        client.on('getPlayersBat', function(player){
-            console.log("getPlayerBat " + client.player.id);
+        client.on('updateBat', function(batNum){
+            console.log("Received bat update request.");
+            client.broadcast.emit('updateBat', batNum);
         });
     });
 });

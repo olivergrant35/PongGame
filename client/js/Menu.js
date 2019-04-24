@@ -33,7 +33,7 @@ class Menu extends Phaser.Scene{
         //Left Side
         this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
         this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
-        this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+        this.player1BatImage = this.add.image(138, 310, globalVars.bats[0]);
         if(globalVars.playerNumber == 1){
             //Bat selectors.
             this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
@@ -51,7 +51,7 @@ class Menu extends Phaser.Scene{
         //Right Side
         this.add.text(610, 150, 'Player 2', {font: "25px Impact"});
         this.add.text(608, 190, 'Bat Colour', {font: "20px Impact"});
-        this.add.image(648, 310, globalVars.bats[]);
+        this.add.image(648, 310, globalVars.bats[0]);
 
         //Ball colour
         this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
@@ -76,10 +76,13 @@ class Menu extends Phaser.Scene{
             this.selectedBat++;
         }
         if(globalVars.playerNumber == 1){
-            this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+            //this.player1BatImage.destroy();
+            this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
         }else{
-            this.add.image(648, 310, globalVars.bats[this.selectedBat]);
+            //this.player2BatImage.destroy();
+            this.player2BatImage = this.add.image(648, 310, globalVars.bats[this.selectedBat]);
         }
+        Client.updateBat(this.selectedBat);
     }
 
     selectPreviousBat(){
@@ -89,10 +92,13 @@ class Menu extends Phaser.Scene{
             this.selectedBat--;
         }
         if(globalVars.playerNumber == 1){
-            this.add.image(138, 310, globalVars.bats[this.selectedBat]);
+            //this.player1BatImage.destroy();
+            this.player1BatImage = this.add.image(138, 310, globalVars.bats[this.selectedBat]);
         }else{
-            this.add.image(648, 310, globalVars.bats[this.selectedBat]);
+            //this.player2BatImage.destroy();
+            this.player2BatImage = this.add.image(648, 310, globalVars.bats[this.selectedBat]);
         }
+        Client.updateBat(this.selectedBat);
     }
 
     selectNextBall(){
@@ -111,5 +117,16 @@ class Menu extends Phaser.Scene{
             this.selectedBall--;
         }
         this.ballImage == this.add.image(400, 510, globalVars.balls[this.selectedBall]);
+    }
+
+    updateOpponentsBat(batNum){
+        console.log("Update opponents bat.");
+        if(globalVars.playerNumber == 1){
+            //this.player2BatImage.destroy();
+            this.player2BatImage = this.add.image(648, 310, globalVars.bats[batNum]);
+        }else{
+            //this.player1BatImage.destroy();
+            this.player1BatImage = this.add.image(138, 310, globalVars.bats[batNum]);
+        }
     }
 }

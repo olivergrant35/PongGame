@@ -10,6 +10,9 @@ Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
 
+Client.updateBat = function(batNum){
+    Client.socket.emit('updateBat', batNum);
+};
 //Won't need. 
 Client.sendClick = function(x,y){
     console.log("Send Click");
@@ -34,6 +37,10 @@ Client.socket.on('newplayer',function(data){
     Game.addNewPlayer(data.id,data.x,data.y);
 });
 
+Client.socket.on('updateBat', function(batNum){
+    console.log("Received bat update request.");
+    Menu.updateOpponentsBat(batNum);
+});
 
 Client.socket.on('allplayers',function(data){
     console.log("socket All players");
