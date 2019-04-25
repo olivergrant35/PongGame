@@ -39,7 +39,7 @@ Client.socket.on('newplayer',function(data){
 
 Client.socket.on('updateBat', function(batNum){
     console.log("Received bat update request.");
-    Menu.updateOpponentsBat(batNum);
+    
 });
 
 Client.socket.on('allplayers',function(data){

@@ -1,17 +1,17 @@
-var config = {
-    type:Phaser.AUTO,
-    width:800,
-    height:600,
-    physics:{
-        default:'arcade',
-        arcade:{
-            gravity:{y: 200}
-        }
-    },
-    scene: [Loading, Menu, GameScreen]
-};
+// var config = {
+//     type:Phaser.AUTO,
+//     width:800,
+//     height:600,
+//     physics:{
+//         default:'arcade',
+//         arcade:{
+//             gravity:{y: 200}
+//         }
+//     },
+//     scene: [Loading, Menu, GameScreen]
+// };
 
-var Game = new Phaser.Game(config);
+// var Game = new Phaser.Game(config);
 
 //Original code given.
 

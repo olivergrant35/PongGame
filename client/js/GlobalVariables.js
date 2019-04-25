@@ -1,4 +1,5 @@
 var globalVars = {
+    scenes: [],
     playerNumber: 0,
     isConnected: false,
     player1SelectedBat: 0,
