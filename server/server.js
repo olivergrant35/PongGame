@@ -53,6 +53,11 @@ io.on('connection', function(client) {
             console.log("Received bat update request.");
             client.broadcast.emit('updateBat', batNum);
         });
+
+        client.on('updateBall', function(ballNum){
+            console.log("Received ball update request.");
+            client.broadcast.emit('updateBall', ballNum);
+        });
     });
 });
 

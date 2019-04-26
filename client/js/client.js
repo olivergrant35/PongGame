@@ -13,7 +13,11 @@ Client.askNewPlayer = function(){
 Client.updateBat = function(batNum){
     Client.socket.emit('updateBat', batNum);
 };
-//Won't need. 
+
+Client.updateBall = function(ballNum){
+    Client.socket.emit('updateBall', ballNum);
+};
+
 Client.sendClick = function(x,y){
     console.log("Send Click");
     Client.socket.emit('click',{x:x,y:y});
@@ -38,8 +42,13 @@ Client.socket.on('newplayer',function(data){
 });
 
 Client.socket.on('updateBat', function(batNum){
-    console.log("Received bat update request.");
-    
+    console.log("Received bat update request");
+    MainMenu.updateOpponentsBat(batNum);
+});
+
+Client.socket.on('updateBall', function(ballNum){
+    console.log("Received ball update request");
+    MainMenu.updateBallColor(ballNum);
 });
 
 Client.socket.on('allplayers',function(data){
