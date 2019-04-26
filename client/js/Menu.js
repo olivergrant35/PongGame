@@ -17,47 +17,47 @@ var mainMenu = new Phaser.Class({
         this.load.image('bat5', 'assets/bat5.png');
     },
     create: function(){
-                //Test to check if client is connected to server.
-                this.input.keyboard.on('keyup_T', function(event){
-                    Client.sendTest();
-                });
-        
-                console.log("Player number: " + globalVars.playerNumber);
-        
-                this.selectedBat = 0;
-                this.selectedBall = 0;
-        
-                //Title
-                this.add.text(270, 10, 'Pong Game', {font: "60px Impact"});
-        
-                //Left Side
-                this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
-                this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
-                this.player1BatImage = this.add.image(138, 310, globalVars.bats[0]);
-                if(globalVars.playerNumber == 1){
-                    //Bat selectors.
-                    this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
-                    this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
-                    //Ball selectors.
-                    this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
-                    this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
-                    this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.startGameScreen());
-                }else if(globalVars.playerNumber == 2){
-                    //Bat selectors. 
-                    this.add.text(602, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
-                    this.add.text(655, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
-                }
-        
-                //Right Side
-                this.add.text(610, 150, 'Player 2', {font: "25px Impact"});
-                this.add.text(608, 190, 'Bat Colour', {font: "20px Impact"});
-                this.add.image(648, 310, globalVars.bats[0]);
-        
-                //Ball colour
-                this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
-                this.ballImage = this.add.image(400, 510, globalVars.balls[this.selectedBall])
-        
-                this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);
+        //Test to check if client is connected to server.
+        this.input.keyboard.on('keyup_T', function(event){
+            Client.sendTest();
+        });
+
+        console.log("Player number: " + globalVars.playerNumber);
+
+        this.selectedBat = 0;
+        this.selectedBall = 0;
+
+        //Title
+        this.add.text(270, 10, 'Pong Game', {font: "60px Impact"});
+
+        //Left Side
+        this.add.text(100, 150, 'Player 1', {font: "25px Impact"});
+        this.add.text(98, 190, 'Bat Colour', {font: "20px Impact"});
+        this.player1BatImage = this.add.image(138, 310, globalVars.bats[0]);
+        if(globalVars.playerNumber == 1){
+            //Bat selectors.
+            this.add.text(92, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
+            this.add.text(145, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
+            //Ball selectors.
+            this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBall());
+            this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBall());
+            this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => this.startGameScreen());
+        }else if(globalVars.playerNumber == 2){
+            //Bat selectors. 
+            this.add.text(602, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectPreviousBat());
+            this.add.text(655, 400, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => this.selectNextBat());
+        }
+
+        //Right Side
+        this.add.text(610, 150, 'Player 2', {font: "25px Impact"});
+        this.add.text(608, 190, 'Bat Colour', {font: "20px Impact"});
+        this.add.image(648, 310, globalVars.bats[0]);
+
+        //Ball colour
+        this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
+        this.ballImage = this.add.image(400, 510, globalVars.balls[this.selectedBall])
+
+        this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);
     },
     update: function(delta){
 
@@ -133,7 +133,7 @@ mainMenu.testMethod = function(batNum){
     console.log("Update opponents bat.");
     if(globalVars.playerNumber == 1){
         //this.player2BatImage.destroy();
-        console.log();
+        console.log(game);
         this.player2BatImage = this.add.image(648, 310, globalVars.bats[batNum]);
     }else{
         //this.player1BatImage.destroy();
