@@ -44,11 +44,11 @@ MainMenu.create = function(){
     //Right Side
     this.add.text(610, 150, 'Player 2', {font: "25px Impact"});
     this.add.text(608, 190, 'Bat Colour', {font: "20px Impact"});
-    player2BatImage = this.add.image(648, 310, globalVars.bats[0]);
+    MainMenu.player2BatImage = this.add.image(648, 310, globalVars.bats[0]);
 
     //Ball colour
     this.add.text(355, 450, 'Ball Colour', {font: "20px Impact"});
-    ballImage = this.add.image(400, 510, globalVars.balls[MainMenu.selectedBall]);
+    MainMenu.ballImage = this.add.image(400, 510, globalVars.balls[MainMenu.selectedBall]);
 
     this.exitButton = this.add.text(368, 250, 'EXIT', {font:"40px Impact"}).setInteractive().on('pointerdown', () => window.location.relaod);
 };
@@ -58,8 +58,13 @@ MainMenu.update = function(){
 };
 
 MainMenu.startGameScreen = function(){
-    player1SelectedBat = selectedBat;
-    this.scene.start("GameScreen");
+    if(globalVars.playerNumber == 1){
+        globalVars.player1SelectedBat = MainMenu.selectedBat;
+        globalVars.player2SelectedBat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key)
+        Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);        
+    }
+    game.scene.start('GameScreen');
+    game.scene.remove('MainMenu');
 };
 
 MainMenu.selectNextBat = function(){
@@ -96,17 +101,17 @@ MainMenu.selectNextBall = function(){
     }else{
         MainMenu.selectedBall++;
     }
-    game.textures.setTexture(ballImage, globalVars.balls[MainMenu.selectedBall]);
+    game.textures.setTexture(MainMenu.ballImage, globalVars.balls[MainMenu.selectedBall]);
     Client.updateBall(MainMenu.selectedBall);
 };
 
 MainMenu.selectPreviousBall = function(){
     if(MainMenu.selectedBall == 0){
-        MainMenu.selectedBall == 4;
+        MainMenu.selectedBall = 4;
     }else{
         MainMenu.selectedBall--;
     }
-    game.textures.setTexture(ballImage, globalVars.balls[MainMenu.selectedBall]);
+    game.textures.setTexture(MainMenu.ballImage, globalVars.balls[MainMenu.selectedBall]);
     Client.updateBall(MainMenu.selectedBall);
 };
 

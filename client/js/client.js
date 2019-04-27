@@ -18,6 +18,10 @@ Client.updateBall = function(ballNum){
     Client.socket.emit('updateBall', ballNum);
 };
 
+Client.startGame = function(p1Bat, p2Bat){
+    Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat});
+};
+
 Client.sendClick = function(x,y){
     console.log("Send Click");
     Client.socket.emit('click',{x:x,y:y});
@@ -49,6 +53,14 @@ Client.socket.on('updateBat', function(batNum){
 Client.socket.on('updateBall', function(ballNum){
     console.log("Received ball update request");
     MainMenu.updateBallColor(ballNum);
+});
+
+Client.socket.on('startGame', function(data){
+    console.log(data.p1Bat);
+    console.log(data.p2Bat);
+    globalVars.player1SelectedBat = data.p1Bat;
+    globalVars.player2SelectedBat = data.p2Bat;
+    MainMenu.startGameScreen();
 });
 
 Client.socket.on('allplayers',function(data){

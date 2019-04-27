@@ -58,6 +58,10 @@ io.on('connection', function(client) {
             console.log("Received ball update request.");
             client.broadcast.emit('updateBall', ballNum);
         });
+
+        client.on('startGame', function(data){
+            client.broadcast.emit('startGame', data);
+        });
     });
 });
 
