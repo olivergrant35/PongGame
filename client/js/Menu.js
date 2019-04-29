@@ -60,11 +60,14 @@ MainMenu.update = function(){
 MainMenu.startGameScreen = function(){
     if(globalVars.playerNumber == 1){
         globalVars.player1SelectedBat = MainMenu.selectedBat;
-        globalVars.player2SelectedBat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key)
-        Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);        
+        globalVars.player2SelectedBat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
+        Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);
     }
+    console.log("start gamescreen");
     game.scene.start('GameScreen');
+    console.log("start gamescreen 2");
     game.scene.remove('MainMenu');
+    console.log("start gamescreen 3");
 };
 
 MainMenu.selectNextBat = function(){

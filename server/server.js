@@ -4,8 +4,6 @@ var server = require('http').createServer();
 var io = require('socket.io')(server);
 
 var PlayerID = 1;
-var player1SelectedBat;
-var player2SelectedBat;
 
 //Runs when connection to server is established. 
 io.on('connection', function(client) {
@@ -47,6 +45,10 @@ io.on('connection', function(client) {
             io.emit('remove', client.player.id);
             PlayerID--;
             console.log('disconnecting: ' + client.player.id);
+        });
+
+        client.on('setSelectedBat', function(batNum){
+            client.player.selectedBat = batNum;
         });
 
         client.on('updateBat', function(batNum){

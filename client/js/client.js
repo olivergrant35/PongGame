@@ -22,6 +22,10 @@ Client.startGame = function(p1Bat, p2Bat){
     Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat});
 };
 
+Client.setSelectedBat = function(batNum){
+    Client.socket.emit('setSelectedBat', batNum);
+}
+
 Client.sendClick = function(x,y){
     console.log("Send Click");
     Client.socket.emit('click',{x:x,y:y});
