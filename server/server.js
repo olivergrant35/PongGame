@@ -4,6 +4,7 @@ var server = require('http').createServer();
 var io = require('socket.io')(server);
 
 var PlayerID = 1;
+var RoomID = 1;
 
 //Runs when connection to server is established. 
 io.on('connection', function(client) {
@@ -16,12 +17,15 @@ io.on('connection', function(client) {
         console.log("New player request received.");
         if(PlayerID <= 2){
             client.player = {
-                id: PlayerID
+                id: PlayerID,
+                room: RoomID
             };
             PlayerID++;
             // client.emit('allplayers',getAllPlayers());
             // client.broadcast.emit('newplayer',client.player);
         }else{
+            RoomID += 1;
+            //TODO: Instead of game full, create new room. 
             console.log("Player tried joining, game full.");
             client.emit('gameFull');
         }
@@ -47,9 +51,9 @@ io.on('connection', function(client) {
             console.log('disconnecting: ' + client.player.id);
         });
 
-        client.on('setSelectedBat', function(batNum){
-            client.player.selectedBat = batNum;
-        });
+        // client.on('setSelectedBat', function(batNum){
+        //     client.player.selectedBat = batNum;
+        // });
 
         client.on('updateBat', function(batNum){
             console.log("Received bat update request.");
@@ -61,8 +65,28 @@ io.on('connection', function(client) {
             client.broadcast.emit('updateBall', ballNum);
         });
 
+        client.on('getSelectedBat', function(){
+            var p1Bat;
+            var p2Bat;
+            p1Bat = client.player.selectedBat;
+            for (let i = 0; i < io.sockets.connected.length; i++) {
+                const player = io.sockets.connected[i];
+                if(player.id == (client.player.id+1) && player.room == client.player.room){
+                    p2Bat = player.selectedBat;                    
+                }    
+            }
+            client.emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat});
+        });
+
         client.on('startGame', function(data){
             client.broadcast.emit('startGame', data);
+            client.player.selectedBat = data.p1Bat;
+            for (let i = 0; i < io.sockets.connected.length; i++) {
+                const player = io.sockets.connected[i];
+                if(player.id == (client.player.id+1) && player.room == client.player.room){
+                    player.selectedBat = data.p2Bat;
+                }
+            }
         });
     });
 });

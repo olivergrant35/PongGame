@@ -34,7 +34,7 @@ MainMenu.create = function(){
         //Ball selectors.
         this.add.text(350, 550, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => MainMenu.selectPreviousBall());
         this.add.text(410, 550, '-->', {font: "20px"}).setInteractive().on('pointerdown', () => MainMenu.selectNextBall());
-        this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => MainMenu.startGameScreen());
+        this.playButton = this.add.text(365, 200, 'PLAY', {font:"40px Impact"}).setInteractive().on('pointerdown', () => MainMenu.hostStartGame());
     }else if(globalVars.playerNumber == 2){
         //Bat selectors. 
         this.add.text(602, 400, '<--', {font: "20px"}).setInteractive().on('pointerdown', () => MainMenu.selectPreviousBat());
@@ -57,17 +57,15 @@ MainMenu.update = function(){
 
 };
 
+MainMenu.hostStartGame = function(){
+    globalVars.player1SelectedBat = MainMenu.selectedBat;
+    globalVars.player2SelectedBat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
+    Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);
+};
+
 MainMenu.startGameScreen = function(){
-    if(globalVars.playerNumber == 1){
-        globalVars.player1SelectedBat = MainMenu.selectedBat;
-        globalVars.player2SelectedBat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
-        Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);
-    }
-    console.log("start gamescreen");
     game.scene.start('GameScreen');
-    console.log("start gamescreen 2");
     game.scene.remove('MainMenu');
-    console.log("start gamescreen 3");
 };
 
 MainMenu.selectNextBat = function(){
