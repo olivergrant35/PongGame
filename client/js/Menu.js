@@ -58,9 +58,9 @@ MainMenu.update = function(){
 };
 
 MainMenu.hostStartGame = function(){
-    globalVars.player1SelectedBat = MainMenu.selectedBat;
-    globalVars.player2SelectedBat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
-    Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);
+    var p1Bat = MainMenu.selectedBat;
+    var p2Bat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
+    Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);    
 };
 
 MainMenu.startGameScreen = function(){

@@ -1,12 +1,22 @@
 var GameScreen = {};
 
 GameScreen.preload = function(){
-    //console.log(game.texture);
-
+    this.load.image('ball1', 'assets/ball1.png');
+    this.load.image('ball2', 'assets/ball2.png');
+    this.load.image('ball3', 'assets/ball3.png');
+    this.load.image('ball4', 'assets/ball4.png');
+    this.load.image('ball5', 'assets/ball5.png');
+    this.load.image('bat1', 'assets/bat1.png');
+    this.load.image('bat2', 'assets/bat2.png');
+    this.load.image('bat3', 'assets/bat3.png');
+    this.load.image('bat4', 'assets/bat4.png');
+    this.load.image('bat5', 'assets/bat5.png');
 };
 
+
+
 GameScreen.create = function(){
-    //this.backToMenuButton = this.add.text(390, 560, 'X', {font: "40px"}).setInteractive().on('pointerdown', () => game.scene.start("Menu"));    
+    
 };
 
 GameScreen.update = function(){
@@ -19,12 +29,3 @@ GameScreen.exitGame = function(){
     //TODO: Need to run Client.endGame(), so other player knows game is ended.
     //Or remove the option to go back to menu.
 };
-
-GameScreen.loadData = function(data){
-
-};
-
-
-function getBatName(){
-
-}

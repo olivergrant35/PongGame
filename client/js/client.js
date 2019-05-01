@@ -68,11 +68,8 @@ Client.socket.on('updateBall', function(ballNum){
     MainMenu.updateBallColor(ballNum);
 });
 
-Client.socket.on('startGame', function(data){
-    console.log(data.p1Bat);
-    console.log(data.p2Bat);
+Client.socket.on('startGame', function(){
     MainMenu.startGameScreen();
-    GameScreen.loadData(data);
 });
 
 Client.socket.on('allplayers',function(data){
@@ -80,11 +77,6 @@ Client.socket.on('allplayers',function(data){
     for(var i = 0; i < data.length; i++){
         Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
     }
-
-    Client.socket.on('move',function(data){
-        console.log("socket move");
-        Game.movePlayer(data.id,data.x,data.y);
-    });
 
     Client.socket.on('remove',function(id){
         console.log("socket Remove");

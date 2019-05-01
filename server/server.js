@@ -79,7 +79,7 @@ io.on('connection', function(client) {
         });
 
         client.on('startGame', function(data){
-            client.broadcast.emit('startGame', data);
+            io.emit('startGame');
             client.player.selectedBat = data.p1Bat;
             for (let i = 0; i < io.sockets.connected.length; i++) {
                 const player = io.sockets.connected[i];
