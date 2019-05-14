@@ -1,6 +1,16 @@
 var GameScreen = {};
 
 GameScreen.preload = function(){
+    console.log("Preload Running.");
+    //Load selected bats.
+    Client.getSelectedBats();
+    GameScreen.p1BatIndex;
+    GameScreen.p2BatIndex;
+    GameScreen.ballIndex;
+    GameScreen.p1Bat;
+    GameScreen.p2Bat;
+    GameScreen.ball;
+    //TODO: Change the below to server sided.
     this.load.image('ball1', 'assets/ball1.png');
     this.load.image('ball2', 'assets/ball2.png');
     this.load.image('ball3', 'assets/ball3.png');
@@ -13,9 +23,26 @@ GameScreen.preload = function(){
     this.load.image('bat5', 'assets/bat5.png');
 };
 
+GameScreen.create = async function(){
+    await sleep(500);
+    console.log("Create Running.");
+    //Need to get the location from server and update clients
+    GameScreen.p1Bat = this.add.image(50, 300, globalVars.bats[GameScreen.p1BatIndex]);
+    GameScreen.p2Bat = this.add.image(750, 300, globalVars.bats[GameScreen.p2BatIndex]);
+    GameScreen.ball = this.add.image(400, 300, globalVars.balls[GameScreen.ballIndex]);
+    
+    //Game input for mobiles.
+    //TODO: sort inputs.
+    var pointer = this.input.activePointer;
+    if(pointer.isDown){
+        if(pointer.x < 200){
+            //player1 move.
+        }else if(pointer.x > 600){
+            //player2 move. 
+        }
+    }
 
-
-GameScreen.create = function(){
+    //input for computers.
     
 };
 
@@ -23,9 +50,13 @@ GameScreen.update = function(){
 
 };
 
-GameScreen.exitGame = function(){
-    //game.scene.start('MainMenu');
-    //game.scene.remove('GameScreen');
-    //TODO: Need to run Client.endGame(), so other player knows game is ended.
-    //Or remove the option to go back to menu.
+GameScreen.setPlayersBats = function(data){
+    console.log("Bats set.");
+    GameScreen.p1BatIndex = data.p1Bat;
+    GameScreen.p2BatIndex = data.p2Bat;
+    GameScreen.ballIndex = data.ball;
 };
+
+const sleep = (milliseconds) => {
+    return new Promise(resolve => setTimeout(resolve, milliseconds))
+  }

@@ -3,39 +3,92 @@ const PORT = 55000;
 var server = require('http').createServer();
 var io = require('socket.io')(server);
 
-var PlayerID = 1;
-var RoomID = 1;
+var RoomID = 0;
+var Rooms = [];
 
-//Runs when connection to server is established. 
+//Runs when connection from client to server is established. 
 io.on('connection', function(client) {
+    console.log("New user connected.");
     client.emit('connected');
-    client.on('test', function() {
-        console.log('test received');
-    });
-    
+
     client.on('newplayer',function() {
-        console.log("New player request received.");
-        if(PlayerID <= 2){
-            client.player = {
-                id: PlayerID,
-                room: RoomID
-            };
-            PlayerID++;
-            // client.emit('allplayers',getAllPlayers());
-            // client.broadcast.emit('newplayer',client.player);
+        if(Rooms.length != 0){
+            var spaceFound = false;
+            for (let i = 0; i < Rooms.length; i++) {
+                const room = Rooms[i];
+                if(room.playerCount = 1){
+                    client.join(room.id);
+                    client.roomInfo = {
+                        roomName: room.id,
+                        playerID: 2
+                    };
+                    room.player2 = {
+                        playerID: 2,
+                        x: 750,
+                        y: 300
+                    }
+                    room.playerCount++;
+                    spaceFound = true;
+                }
+            }
+            if(!spaceFound){
+                createNewRoom();
+                client.join(Rooms[Rooms.length - 1].id);
+                client.roomInfo = {
+                    roomName: Rooms[Rooms.length - 1].id,
+                    playerID: 1
+                };
+                Rooms[Rooms.length - 1].player1 = {
+                    playerID: 1,
+                    x: 50,
+                    y: 300,
+                }
+            }
         }else{
-            RoomID += 1;
-            //TODO: Instead of game full, create new room. 
-            console.log("Player tried joining, game full.");
-            client.emit('gameFull');
+            createNewRoom();
+            client.join(Rooms[0].id);            
+            client.roomInfo = {
+                roomName: Rooms[0].id,
+                playerID: 1
+            };
+            Rooms[0].player1 = {
+                playerID: 1,
+                x: 50,
+                y: 300,
+            }
         }
 
+        // if(PlayerID <= 2){
+        //     client.player = {
+        //         id: PlayerID,
+        //         room: {
+        //             id: RoomID,
+        //             player1: {
+        //                 x: 50,
+        //                 y: 300
+        //             },
+        //             player2: {
+        //                 x: 750,
+        //                 y: 300
+        //             },
+        //             ball: {
+        //                 x: 400,
+        //                 y: 300
+        //             }
+        //         }
+        //     };            
+        //     PlayerID++;
+        //     // client.emit('allplayers',getAllPlayers());
+        //     // client.broadcast.emit('newplayer',client.player);            
+        // }else{
+        //     //TODO: Create a new room for 2 new players.
+        //     RoomID += 1;
+        //     console.log("Player tried joining, game full.");
+        //     client.emit('gameFull');
+        // }
+
         client.on('playerNumber', function(){
-            if(client.player == null){
-                client.emit('playerNumber', -1);
-            }else{
-                client.emit('playerNumber', client.player.id);   
-            }            
+            client.emit('playerNumber', client.roomInfo.playerID);
         });
 
         client.on('click',function(data) {
@@ -46,9 +99,9 @@ io.on('connection', function(client) {
         });
 
         client.on('disconnect',function() {
-            io.emit('remove', client.player.id);
-            PlayerID--;
-            console.log('disconnecting: ' + client.player.id);
+            io.to(Rooms[client.roomID]).emit('playerDisconnected');
+            Rooms.splice(client.roomID, 1);
+            console.log('Player disconnected. Removing room: ' + client.roomInfo.roomName);
         });
 
         // client.on('setSelectedBat', function(batNum){
@@ -66,27 +119,18 @@ io.on('connection', function(client) {
         });
 
         client.on('getSelectedBat', function(){
-            var p1Bat;
-            var p2Bat;
-            p1Bat = client.player.selectedBat;
-            for (let i = 0; i < io.sockets.connected.length; i++) {
-                const player = io.sockets.connected[i];
-                if(player.id == (client.player.id+1) && player.room == client.player.room){
-                    p2Bat = player.selectedBat;                    
-                }    
-            }
-            client.emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat});
+            var p1Bat = Rooms[client.roomInfo.roomName].player1.selectedBat;
+            var p2Bat = Rooms[client.roomInfo.roomName].player2.selectedBat;
+            var ball = Rooms[client.roomInfo.roomName].ball;
+            client.emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
         });
 
         client.on('startGame', function(data){
             io.emit('startGame');
-            client.player.selectedBat = data.p1Bat;
-            for (let i = 0; i < io.sockets.connected.length; i++) {
-                const player = io.sockets.connected[i];
-                if(player.id == (client.player.id+1) && player.room == client.player.room){
-                    player.selectedBat = data.p2Bat;
-                }
-            }
+            console.log(data);
+            Rooms[client.roomInfo.roomName].player1.selectedBat = data.p1Bat;
+            Rooms[client.roomInfo.roomName].player2.selectedBat = data.p2Bat;
+            Rooms[client.roomInfo.roomName].ball = data.ball;
         });
     });
 });
@@ -95,14 +139,13 @@ server.listen(PORT, function(){
     console.log('Listening on ' + server.address().port);
 });
 
-function getAllPlayers(){
-    console.log("getAllPlayers");
-    var players = [];
-    Object.keys(io.sockets.connected).forEach(function(socketID){
-        var player = io.sockets.connected[socketID].player;
-        if(player) players.push(player);
-    });
-    return players;
+function createNewRoom(){
+    var room = {
+        id: RoomID,
+        playerCount: 1
+    }
+    Rooms.push(room);
+    RoomID++;
 }
 
 function randomInt(low, high) {

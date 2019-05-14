@@ -14,11 +14,8 @@ LoadingScene.create = function(){
 };
 
 LoadingScene.update = function(){
-    if(globalVars.isConnected && globalVars.playerNumber == 1 || globalVars.playerNumber == 2){
+    if(globalVars.isConnected){
         game.scene.start('MainMenu');
         game.scene.remove('Loading');
-    }else if(globalVars.isConnected && globalVars.playerNumber == -1 && this.fullMessageDisplayed == false){
-        this.fullMessageDisplayed = true;
-        window.alert("Game currently full. Please wait or try again later.");
     }
 };

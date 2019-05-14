@@ -18,8 +18,8 @@ Client.updateBall = function(ballNum){
     Client.socket.emit('updateBall', ballNum);
 };
 
-Client.startGame = function(p1Bat, p2Bat){
-    Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat});
+Client.startGame = function(p1Bat, p2Bat, ball){
+    Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
 };
 
 // Client.setSelectedBat = function(batNum){
@@ -45,7 +45,7 @@ Client.socket.on('connected', function(){
 });
 
 Client.socket.on('playerNumber', function(num){
-    globalVars.playerNumber = num; 
+    globalVars.playerNumber = num;
 });
 
 Client.socket.on('newplayer',function(data){
@@ -54,8 +54,8 @@ Client.socket.on('newplayer',function(data){
 });
 
 Client.socket.on('selectedBat', function(bats){
-    console.log("Recevied both bats, player1: " + bats.p1Bat + " player2: " + bats.p2Bat);
-
+    console.log("Recevied data, player1: " + bats.p1Bat + " player2: " + bats.p2Bat + " Ball: " + bats.ball);
+    GameScreen.setPlayersBats(bats);
 });
 
 Client.socket.on('updateBat', function(batNum){
@@ -78,13 +78,14 @@ Client.socket.on('allplayers',function(data){
         Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
     }
 
-    Client.socket.on('remove',function(id){
-        console.log("socket Remove");
-        Game.removePlayer(id);
+    Client.socket.on('playerDisconnected',function(){
+        console.log("Player disconnected, game ended.");
+        window.alert("Game ended. Searching for new game.");
+        location.reload(); 
     });
 
     Client.socket.on('gameFull', function(){
         console.log("Recived Game Full.");
-        globalVars.playerNumber = -1;        
+        globalVars.playerNumber = -1;
     });
 });

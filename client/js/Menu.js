@@ -60,7 +60,7 @@ MainMenu.update = function(){
 MainMenu.hostStartGame = function(){
     var p1Bat = MainMenu.selectedBat;
     var p2Bat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
-    Client.startGame(globalVars.player1SelectedBat, globalVars.player2SelectedBat);    
+    Client.startGame(p1Bat, p2Bat, MainMenu.selectedBall);
 };
 
 MainMenu.startGameScreen = function(){
