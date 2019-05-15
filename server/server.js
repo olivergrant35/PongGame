@@ -11,6 +11,7 @@ io.on('connection', function(client) {
     console.log("New user connected.");
     client.emit('connected');
 
+    //TODO: Fix room issues, can get caught in a loop of disconnecting rooms on player leaving. 
     client.on('newplayer',function() {
         if(Rooms.length != 0){
             var spaceFound = false;
@@ -58,55 +59,19 @@ io.on('connection', function(client) {
             }
         }
 
-        // if(PlayerID <= 2){
-        //     client.player = {
-        //         id: PlayerID,
-        //         room: {
-        //             id: RoomID,
-        //             player1: {
-        //                 x: 50,
-        //                 y: 300
-        //             },
-        //             player2: {
-        //                 x: 750,
-        //                 y: 300
-        //             },
-        //             ball: {
-        //                 x: 400,
-        //                 y: 300
-        //             }
-        //         }
-        //     };            
-        //     PlayerID++;
-        //     // client.emit('allplayers',getAllPlayers());
-        //     // client.broadcast.emit('newplayer',client.player);            
-        // }else{
-        //     //TODO: Create a new room for 2 new players.
-        //     RoomID += 1;
-        //     console.log("Player tried joining, game full.");
-        //     client.emit('gameFull');
-        // }
-
         client.on('playerNumber', function(){
             client.emit('playerNumber', client.roomInfo.playerID);
         });
 
-        client.on('click',function(data) {
-            console.log('click to '+data.x+', '+data.y);
-            client.player.x = data.x;
-            client.player.y = data.y;
-            io.emit('move',client.player);
+        client.on('sendMovePlayer', function(data){
+            io.to(client.roomInfo.roomName).emit('movePlayer', data);
         });
 
         client.on('disconnect',function() {
-            io.to(Rooms[client.roomID]).emit('playerDisconnected');
-            Rooms.splice(client.roomID, 1);
+            io.to(client.roomInfo.roomName).emit('playerDisconnected');
+            Rooms.splice(client.roomInfo.roomName, 1);
             console.log('Player disconnected. Removing room: ' + client.roomInfo.roomName);
         });
-
-        // client.on('setSelectedBat', function(batNum){
-        //     client.player.selectedBat = batNum;
-        // });
 
         client.on('updateBat', function(batNum){
             console.log("Received bat update request.");
@@ -146,9 +111,5 @@ function createNewRoom(){
     }
     Rooms.push(room);
     RoomID++;
-}
-
-function randomInt(low, high) {
-    return Math.floor(Math.random() * (high - low) + low);
 }
 

@@ -1,11 +1,6 @@
 var Client = {};
 Client.socket = io('http://localhost:55000');
 
-Client.sendTest = function(){
-    console.log("test sent");
-    Client.socket.emit('test');
-};
-
 Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
@@ -22,17 +17,12 @@ Client.startGame = function(p1Bat, p2Bat, ball){
     Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
 };
 
-// Client.setSelectedBat = function(batNum){
-//     Client.socket.emit('setSelectedBat', batNum);
-// }
+Client.sendMovePlayer = function(data){
+    Client.socket.emit('sendMovePlayer', data);
+};
 
 Client.getSelectedBats = function(){
     Client.socket.emit('getSelectedBat');
-};
-
-Client.sendClick = function(x,y){
-    console.log("Send Click");
-    Client.socket.emit('click',{x:x,y:y});
 };
 
 Client.playerNumber = function(){
@@ -46,11 +36,6 @@ Client.socket.on('connected', function(){
 
 Client.socket.on('playerNumber', function(num){
     globalVars.playerNumber = num;
-});
-
-Client.socket.on('newplayer',function(data){
-    console.log("socket new player");
-    Game.addNewPlayer(data.id,data.x,data.y);
 });
 
 Client.socket.on('selectedBat', function(bats){
@@ -68,8 +53,23 @@ Client.socket.on('updateBall', function(ballNum){
     MainMenu.updateBallColor(ballNum);
 });
 
+Client.socket.on('movePlayer', function(data){
+    GameScreen.movePlayer(data);
+});
+
 Client.socket.on('startGame', function(){
     MainMenu.startGameScreen();
+});
+
+Client.socket.on('playerDisconnected',function(){
+    console.log("Player disconnected, game ended.");
+    window.alert("Game ended. Searching for new game.");
+    location.reload();
+});
+
+Client.socket.on('gameFull', function(){
+    console.log("Recived Game Full.");
+    globalVars.playerNumber = -1;
 });
 
 Client.socket.on('allplayers',function(data){
@@ -77,15 +77,4 @@ Client.socket.on('allplayers',function(data){
     for(var i = 0; i < data.length; i++){
         Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
     }
-
-    Client.socket.on('playerDisconnected',function(){
-        console.log("Player disconnected, game ended.");
-        window.alert("Game ended. Searching for new game.");
-        location.reload(); 
-    });
-
-    Client.socket.on('gameFull', function(){
-        console.log("Recived Game Full.");
-        globalVars.playerNumber = -1;
-    });
 });
