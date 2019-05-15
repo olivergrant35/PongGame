@@ -10,7 +10,10 @@ GameScreen.preload = function(){
     GameScreen.p1Bat;
     GameScreen.p2Bat;
     GameScreen.ball;
-    GameScreen.playerSpeed = 5;
+    GameScreen.playerSpeed = 4;
+    GameScreen.ballSpeed = 6;
+    GameScreen.player1Score;
+    GameScreen.player2Score;
     //TODO: Change the below to server sided.
     this.load.image('ball1', 'assets/ball1.png');
     this.load.image('ball2', 'assets/ball2.png');
@@ -39,7 +42,15 @@ GameScreen.create = async function(){
         up: false,
         down: false
     };
-    GameScreen.ball = this.add.image(400, 300, globalVars.balls[GameScreen.ballIndex]);
+    GameScreen.ball = {
+        image: this.add.image(400, 300, globalVars.balls[GameScreen.ballIndex]),
+        xSpeed: 6, 
+        ySpeed: 0
+    };
+
+    //Score text.
+    GameScreen.player1Score = this.add.text(250, 10, '0', {font: '20px Impact'});
+    GameScreen.player2Score = this.add.text(550, 10, '0', {font: '20px Impact'});
     
     //Game input for mobiles.
     //TODO: sort inputs.
@@ -76,6 +87,19 @@ GameScreen.update = async function(){
     if(GameScreen.p2Bat.down && GameScreen.p2Bat.image.y < 525){
         GameScreen.p2Bat.image.y += GameScreen.playerSpeed;
     }
+
+    //Ball hit left side - point to player 2.
+    if(globalVars.playerNumber == 1){
+        if(GameScreen.ball.image.x <= 15){
+            Client.addScore(2);
+            resetBall(2);
+        }else if(GameScreen.ball.image.x >= 785){
+            Client.addScore(1);
+            resetBall(1);
+        }
+    }    
+
+    GameScreen.ball.image.x
 };
 
 GameScreen.movePlayer = function(data){
@@ -99,11 +123,29 @@ GameScreen.movePlayer = function(data){
 };
 
 GameScreen.setPlayersBats = function(data){
-    console.log("Bats set.");
+    console.log("Bats and ball set.");
     GameScreen.p1BatIndex = data.p1Bat;
     GameScreen.p2BatIndex = data.p2Bat;
     GameScreen.ballIndex = data.ball;
 };
+
+GameScreen.addScoreToPlayer = function(data){
+    if(data.playerNum == 1){
+        GameScreen.player1Score.setText(data.score);
+    }else{
+        GameScreen.player2Score.setText(data.score);
+    }
+};
+
+function resetBall(playerNum){
+    GameScreen.ball.image.x = 400;
+    GameScreen.ball.image.y = 300;
+    if(playerNum == 1){
+        GameScreen.ball.xSpeed = -GameScreen.ballSpeed;
+    }else{
+        GameScreen.ball.xSpeed = GameScreen.ballSpeed;
+    }
+}
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))

@@ -26,7 +26,8 @@ io.on('connection', function(client) {
                     room.player2 = {
                         playerID: 2,
                         x: 750,
-                        y: 300
+                        y: 300,
+                        score: 0
                     }
                     room.playerCount++;
                     spaceFound = true;
@@ -43,6 +44,7 @@ io.on('connection', function(client) {
                     playerID: 1,
                     x: 50,
                     y: 300,
+                    score: 0
                 }
             }
         }else{
@@ -56,6 +58,7 @@ io.on('connection', function(client) {
                 playerID: 1,
                 x: 50,
                 y: 300,
+                score: 0
             }
         }
 
@@ -96,6 +99,17 @@ io.on('connection', function(client) {
             Rooms[client.roomInfo.roomName].player1.selectedBat = data.p1Bat;
             Rooms[client.roomInfo.roomName].player2.selectedBat = data.p2Bat;
             Rooms[client.roomInfo.roomName].ball = data.ball;
+        });
+
+        Client.on('addScore', function(playerNum){
+            var room = Rooms[client.roomInfo.roomName];
+            if(playerNum == 1){                
+                room.player1.score++;
+                io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player1.score});
+            }else{
+                room.player2.score++;
+                io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player2.score});
+            }
         });
     });
 });

@@ -13,6 +13,10 @@ Client.updateBall = function(ballNum){
     Client.socket.emit('updateBall', ballNum);
 };
 
+Client.addScore = function(playerNum){
+    Client.socket.emit('addScore', playerNum);
+};
+
 Client.startGame = function(p1Bat, p2Bat, ball){
     Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
 };
@@ -46,6 +50,10 @@ Client.socket.on('selectedBat', function(bats){
 Client.socket.on('updateBat', function(batNum){
     console.log("Received bat update request");
     MainMenu.updateOpponentsBat(batNum);
+});
+
+Client.socket.on('addScore', function(data){
+    GameScreen.addScoreToPlayer(data);
 });
 
 Client.socket.on('updateBall', function(ballNum){
