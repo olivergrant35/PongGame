@@ -5,6 +5,7 @@ var io = require('socket.io')(server);
 
 var RoomID = 0;
 var Rooms = [];
+var ballSpeed = 6;
 
 //Runs when connection from client to server is established. 
 io.on('connection', function(client) {
@@ -100,16 +101,31 @@ io.on('connection', function(client) {
             Rooms[client.roomInfo.roomName].player2.selectedBat = data.p2Bat;
             Rooms[client.roomInfo.roomName].ball = data.ball;
         });
-
-        Client.on('addScore', function(playerNum){
+        
+        client.on('addScore', function(playerNum){
             var room = Rooms[client.roomInfo.roomName];
             if(playerNum == 1){                
                 room.player1.score++;
+                console.log("player 1 score after add: " + room.player1.score);
                 io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player1.score});
+                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: -ballSpeed, ySpeed: 0});
+                io.to(client.roomInfo.roomName).emit('resetBall');
             }else{
                 room.player2.score++;
                 io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player2.score});
+                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: ballSpeed, ySpeed: 0});
+                io.to(client.roomInfo.roomName).emit('resetBall');
             }
+        });
+
+        client.on('ballCollidedWithBat', function(data){
+            var xS = -data.xSpeed;
+            var yS = randomNumber();
+            io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: xS, ySpeed: yS});
+        });
+
+        client.on('ballCollidedWithWorld', function(data){
+            io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: data.xSpeed, ySpeed: -data.ySpeed});
         });
     });
 });
@@ -125,5 +141,11 @@ function createNewRoom(){
     }
     Rooms.push(room);
     RoomID++;
+}
+
+function randomNumber(){
+    var num = Math.floor(Math.random() * 7);
+    num *= Math.floor(Math.random()*2) == 1 ? 1 : -1;
+    return num;
 }
 

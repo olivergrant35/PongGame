@@ -11,7 +11,6 @@ GameScreen.preload = function(){
     GameScreen.p2Bat;
     GameScreen.ball;
     GameScreen.playerSpeed = 4;
-    GameScreen.ballSpeed = 6;
     GameScreen.player1Score;
     GameScreen.player2Score;
     //TODO: Change the below to server sided.
@@ -33,24 +32,29 @@ GameScreen.create = async function(){
     console.log("Create Running.");
     //Need to get the location from server and update clients
     GameScreen.p1Bat = {
-        image: this.add.image(50, 300, globalVars.bats[GameScreen.p1BatIndex]),
+        image: this.physics.add.image(50, 300, globalVars.bats[GameScreen.p1BatIndex]),
         up: false,
         down: false
     };
     GameScreen.p2Bat = {
-        image: this.add.image(750, 300, globalVars.bats[GameScreen.p2BatIndex]),
+        image: this.physics.add.image(750, 300, globalVars.bats[GameScreen.p2BatIndex]),
         up: false,
         down: false
     };
     GameScreen.ball = {
-        image: this.add.image(400, 300, globalVars.balls[GameScreen.ballIndex]),
-        xSpeed: 6, 
+        image: this.physics.add.image(400, 300, globalVars.balls[GameScreen.ballIndex]),
+        xSpeed: 6,
         ySpeed: 0
     };
 
+    this.physics.add.collider(GameScreen.p1Bat.image, GameScreen.ball.image, GameScreen.collided, null, this);
+    this.physics.add.collider(GameScreen.p2Bat.image, GameScreen.ball.image, GameScreen.collided, null, this);
+
+    GameScreen.ball.image.setCollideWorldBounds(true);
+
     //Score text.
-    GameScreen.player1Score = this.add.text(250, 10, '0', {font: '20px Impact'});
-    GameScreen.player2Score = this.add.text(550, 10, '0', {font: '20px Impact'});
+    GameScreen.player1Score = this.add.text(200, 10, '0', {font: '30px Impact'});
+    GameScreen.player2Score = this.add.text(600, 10, '0', {font: '30px Impact'});
     
     //Game input for mobiles.
     //TODO: sort inputs.
@@ -88,18 +92,41 @@ GameScreen.update = async function(){
         GameScreen.p2Bat.image.y += GameScreen.playerSpeed;
     }
 
-    //Ball hit left side - point to player 2.
+    //Ball hit left side - point to player 2. 
     if(globalVars.playerNumber == 1){
         if(GameScreen.ball.image.x <= 15){
             Client.addScore(2);
-            resetBall(2);
-        }else if(GameScreen.ball.image.x >= 785){
+        }else if(GameScreen.ball.image.x >= 785){ //Ball hit right side - point to player 1.
             Client.addScore(1);
-            resetBall(1);
         }
-    }    
+    }
 
-    GameScreen.ball.image.x
+    //If ball hits top or bottom, send to server to update speeds for bounce.
+    if(GameScreen.ball.image.y <= 15){
+        Client.collidedWithWorld({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
+        GameScreen.ball.xSpeed = 0;
+        GameScreen.ball.ySpeed = 0;
+        GameScreen.ball.image.y = 16;
+    }else if(GameScreen.ball.image.y >= 585){
+        Client.collidedWithWorld({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
+        GameScreen.ball.xSpeed = 0;
+        GameScreen.ball.ySpeed = 0;
+        GameScreen.ball.image.y = 584;
+    }
+
+    GameScreen.ball.image.x += GameScreen.ball.xSpeed;
+    GameScreen.ball.image.y += GameScreen.ball.ySpeed;
+};
+
+GameScreen.collided = function(){
+    Client.collidedWithBat({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
+    GameScreen.ball.xSpeed = 0;
+    GameScreen.ball.ySpeed = 0;
+    if(GameScreen.ball.image.x > 400){
+        GameScreen.ball.image.x = 720;
+    }else if(GameScreen.ball.image.x < 400){
+        GameScreen.ball.image.x = 80;
+    }
 };
 
 GameScreen.movePlayer = function(data){
@@ -130,23 +157,25 @@ GameScreen.setPlayersBats = function(data){
 };
 
 GameScreen.addScoreToPlayer = function(data){
-    if(data.playerNum == 1){
+    if(data.playerNumber == 1){
         GameScreen.player1Score.setText(data.score);
     }else{
         GameScreen.player2Score.setText(data.score);
     }
 };
 
-function resetBall(playerNum){
+//Called from client when server sends new ball speeds.
+GameScreen.updateBallSpeed = function(data){
+    GameScreen.ball.xSpeed = data.xSpeed;
+    GameScreen.ball.ySpeed = data.ySpeed;
+};
+
+//Called from client when server request ball reset.
+GameScreen.resetBallPos = function(){
     GameScreen.ball.image.x = 400;
     GameScreen.ball.image.y = 300;
-    if(playerNum == 1){
-        GameScreen.ball.xSpeed = -GameScreen.ballSpeed;
-    }else{
-        GameScreen.ball.xSpeed = GameScreen.ballSpeed;
-    }
-}
+};
 
 const sleep = (milliseconds) => {
     return new Promise(resolve => setTimeout(resolve, milliseconds))
-  }
+}

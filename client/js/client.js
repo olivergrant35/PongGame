@@ -17,6 +17,14 @@ Client.addScore = function(playerNum){
     Client.socket.emit('addScore', playerNum);
 };
 
+Client.collidedWithBat = function(data){
+    Client.socket.emit('ballCollidedWithBat', data);
+};
+
+Client.collidedWithWorld = function(data){
+    Client.socket.emit('ballCollidedWithWorld', data);
+};
+
 Client.startGame = function(p1Bat, p2Bat, ball){
     Client.socket.emit('startGame', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
 };
@@ -56,9 +64,17 @@ Client.socket.on('addScore', function(data){
     GameScreen.addScoreToPlayer(data);
 });
 
+Client.socket.on('resetBall', function(){
+    GameScreen.resetBallPos();
+});
+
 Client.socket.on('updateBall', function(ballNum){
     console.log("Received ball update request");
     MainMenu.updateBallColor(ballNum);
+});
+
+Client.socket.on('updateBallSpeed', function(data){
+    GameScreen.updateBallSpeed(data);
 });
 
 Client.socket.on('movePlayer', function(data){
