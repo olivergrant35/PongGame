@@ -13,6 +13,8 @@ GameScreen.preload = function(){
     GameScreen.playerSpeed = 4;
     GameScreen.player1Score;
     GameScreen.player2Score;
+    GameScreen.particles;
+    GameScreen.emitter;
     //TODO: Change the below to server sided.
     this.load.image('ball1', 'assets/ball1.png');
     this.load.image('ball2', 'assets/ball2.png');
@@ -24,6 +26,7 @@ GameScreen.preload = function(){
     this.load.image('bat3', 'assets/bat3.png');
     this.load.image('bat4', 'assets/bat4.png');
     this.load.image('bat5', 'assets/bat5.png');
+    this.load.image('ball2Particle', 'assets/ball2Particle.png');
 };
 
 GameScreen.create = async function(){
@@ -51,6 +54,17 @@ GameScreen.create = async function(){
     this.physics.add.collider(GameScreen.p2Bat.image, GameScreen.ball.image, GameScreen.collided, null, this);
 
     GameScreen.ball.image.setCollideWorldBounds(true);
+
+    GameScreen.particles = this.add.particles('ball2Particle');
+
+    GameScreen.emitter = GameScreen.particles.createEmitter({
+        speed: {min: 100, max: 300},
+        alpha: {start: 1, end: 0},
+        quantity: {min: 50, max: 100},
+        lifespan: 300,
+        scale: {min: 0.7, max: 1},
+        on: false
+    });
 
     //Score text.
     GameScreen.player1Score = this.add.text(200, 10, '0', {font: '30px Impact'});
@@ -104,11 +118,13 @@ GameScreen.update = async function(){
     //If ball hits top or bottom, send to server to update speeds for bounce.
     if(GameScreen.ball.image.y <= 15){
         Client.collidedWithWorld({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
+        GameScreen.particles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
         GameScreen.ball.xSpeed = 0;
         GameScreen.ball.ySpeed = 0;
         GameScreen.ball.image.y = 16;
     }else if(GameScreen.ball.image.y >= 585){
         Client.collidedWithWorld({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
+        GameScreen.particles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
         GameScreen.ball.xSpeed = 0;
         GameScreen.ball.ySpeed = 0;
         GameScreen.ball.image.y = 584;
@@ -120,6 +136,7 @@ GameScreen.update = async function(){
 
 GameScreen.collided = function(){
     Client.collidedWithBat({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
+    GameScreen.particles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
     GameScreen.ball.xSpeed = 0;
     GameScreen.ball.ySpeed = 0;
     if(GameScreen.ball.image.x > 400){
@@ -168,6 +185,7 @@ GameScreen.addScoreToPlayer = function(data){
 GameScreen.updateBallSpeed = function(data){
     GameScreen.ball.xSpeed = data.xSpeed;
     GameScreen.ball.ySpeed = data.ySpeed;
+
 };
 
 //Called from client when server request ball reset.
