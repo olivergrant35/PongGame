@@ -17,6 +17,10 @@ Client.addScore = function(playerNum){
     Client.socket.emit('addScore', playerNum);
 };
 
+Client.readyToStart = function(){
+    Client.socket.emit('readyToStart');
+};
+
 Client.collidedWithBat = function(data){
     Client.socket.emit('ballCollidedWithBat', data);
 };
@@ -66,6 +70,10 @@ Client.socket.on('addScore', function(data){
 
 Client.socket.on('resetBall', function(){
     GameScreen.resetBallPos();
+});
+
+Client.socket.on('playersReady', function(){
+    MainMenu.gameReady();
 });
 
 Client.socket.on('updateBall', function(ballNum){

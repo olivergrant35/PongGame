@@ -6,6 +6,7 @@ MainMenu.preload = function(){
     MainMenu.ballImage;
     MainMenu.selectedBat = 0;
     MainMenu.selectedBall = 0;
+    MainMenu.isGameReady = false;
     this.load.image('ball1', 'assets/ball1.png');
     this.load.image('ball2', 'assets/ball2.png');
     this.load.image('ball3', 'assets/ball3.png');
@@ -58,9 +59,13 @@ MainMenu.update = function(){
 };
 
 MainMenu.hostStartGame = function(){
-    var p1Bat = MainMenu.selectedBat;
-    var p2Bat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
-    Client.startGame(p1Bat, p2Bat, MainMenu.selectedBall);
+    if(MainMenu.isGameReady){
+        var p1Bat = MainMenu.selectedBat;
+        var p2Bat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
+        Client.startGame(p1Bat, p2Bat, MainMenu.selectedBall);
+    }else{
+        window.alert("Not all players connected. Please wait and try again.");
+    }
 };
 
 MainMenu.startGameScreen = function(){
@@ -122,6 +127,10 @@ MainMenu.updateOpponentsBat = function(batNum){
     }else{
         game.textures.setTexture(MainMenu.player1BatImage, globalVars.bats[batNum]);
     }
+};
+
+MainMenu.gameReady = function(){
+    MainMenu.isGameReady = true; 
 };
 
 MainMenu.updateBallColor = function(ballNum){

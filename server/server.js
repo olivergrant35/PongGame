@@ -94,6 +94,12 @@ io.on('connection', function(client) {
             client.emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
         });
 
+        client.on('readyToStart', function(){
+            if(Rooms[client.roomInfo.roomName].player2 != null){
+                io.to(client.roomInfo.roomName).emit('playersReady');
+            }
+        });
+
         client.on('startGame', function(data){
             io.emit('startGame');
             console.log(data);

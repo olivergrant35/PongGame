@@ -2,7 +2,6 @@ var LoadingScene = {};
 
 LoadingScene.preload = function(){
     console.log("loading started");
-    this.fullMessageDisplayed = false;
 };
 
 LoadingScene.create = function(){
