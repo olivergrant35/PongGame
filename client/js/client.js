@@ -17,10 +17,6 @@ Client.addScore = function(playerNum){
     Client.socket.emit('addScore', playerNum);
 };
 
-Client.readyToStart = function(){
-    Client.socket.emit('readyToStart');
-};
-
 Client.collidedWithBat = function(data){
     Client.socket.emit('ballCollidedWithBat', data);
 };

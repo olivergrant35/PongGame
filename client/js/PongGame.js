@@ -13,8 +13,10 @@ GameScreen.preload = function(){
     GameScreen.playerSpeed = 4;
     GameScreen.player1Score;
     GameScreen.player2Score;
-    GameScreen.particles;
+    GameScreen.ballParticles;
     GameScreen.emitter;
+    GameScreen.pointSound;
+    GameScreen.bounceSound;
     //TODO: Change the below to server sided.
     this.load.image('ball1', 'assets/ball1.png');
     this.load.image('ball2', 'assets/ball2.png');
@@ -26,7 +28,19 @@ GameScreen.preload = function(){
     this.load.image('bat3', 'assets/bat3.png');
     this.load.image('bat4', 'assets/bat4.png');
     this.load.image('bat5', 'assets/bat5.png');
+    this.load.image('ball1Particle', 'assets/ball1Particle.png');
     this.load.image('ball2Particle', 'assets/ball2Particle.png');
+    this.load.image('ball3Particle', 'assets/ball3Particle.png');
+    this.load.image('ball4Particle', 'assets/ball4Particle.png');
+    this.load.image('ball5Particle', 'assets/ball5Particle.png');
+    this.load.image('bat1Particle', 'assets/bat1Particle.png');
+    this.load.image('bat2Particle', 'assets/bat2Particle.png');
+    this.load.image('bat3Particle', 'assets/bat3Particle.png');
+    this.load.image('bat4Particle', 'assets/bat4Particle.png');
+    this.load.image('bat5Particle', 'assets/bat5Particle.png');
+
+    this.load.audio('point', 'assets/sounds/point.mp3');
+    this.load.audio('bounce', 'assets/sounds/bounce2.mp3'); 
 };
 
 GameScreen.create = async function(){
@@ -55,9 +69,8 @@ GameScreen.create = async function(){
 
     GameScreen.ball.image.setCollideWorldBounds(true);
 
-    GameScreen.particles = this.add.particles('ball2Particle');
-
-    GameScreen.emitter = GameScreen.particles.createEmitter({
+    GameScreen.ballParticles = this.add.particles(globalVars.balls[GameScreen.ballIndex] + "Particle");
+    GameScreen.emitter = GameScreen.ballParticles.createEmitter({
         speed: {min: 100, max: 300},
         alpha: {start: 1, end: 0},
         quantity: {min: 50, max: 100},
@@ -65,6 +78,12 @@ GameScreen.create = async function(){
         scale: {min: 0.7, max: 1},
         on: false
     });
+
+    //TODO: Create particles for bat when ball hits. 
+
+    //Sounds
+    GameScreen.pointSound = this.sound.add('point');
+    GameScreen.bounceSound = this.sound.add('bounce');
 
     //Score text.
     GameScreen.player1Score = this.add.text(200, 10, '0', {font: '30px Impact'});
@@ -118,13 +137,13 @@ GameScreen.update = async function(){
     //If ball hits top or bottom, send to server to update speeds for bounce.
     if(GameScreen.ball.image.y <= 15){
         Client.collidedWithWorld({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
-        GameScreen.particles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
+        GameScreen.ballParticles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
         GameScreen.ball.xSpeed = 0;
         GameScreen.ball.ySpeed = 0;
         GameScreen.ball.image.y = 16;
     }else if(GameScreen.ball.image.y >= 585){
         Client.collidedWithWorld({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
-        GameScreen.particles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
+        GameScreen.ballParticles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
         GameScreen.ball.xSpeed = 0;
         GameScreen.ball.ySpeed = 0;
         GameScreen.ball.image.y = 584;
@@ -136,7 +155,7 @@ GameScreen.update = async function(){
 
 GameScreen.collided = function(){
     Client.collidedWithBat({xSpeed: GameScreen.ball.xSpeed, ySpeed: GameScreen.ball.ySpeed});
-    GameScreen.particles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
+    GameScreen.ballParticles.emitParticleAt(GameScreen.ball.image.x, GameScreen.ball.image.y);
     GameScreen.ball.xSpeed = 0;
     GameScreen.ball.ySpeed = 0;
     if(GameScreen.ball.image.x > 400){
@@ -179,13 +198,14 @@ GameScreen.addScoreToPlayer = function(data){
     }else{
         GameScreen.player2Score.setText(data.score);
     }
+    GameScreen.pointSound.play();
 };
 
 //Called from client when server sends new ball speeds.
 GameScreen.updateBallSpeed = function(data){
     GameScreen.ball.xSpeed = data.xSpeed;
     GameScreen.ball.ySpeed = data.ySpeed;
-
+    GameScreen.bounceSound.play();
 };
 
 //Called from client when server request ball reset.

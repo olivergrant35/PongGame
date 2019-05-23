@@ -32,6 +32,7 @@ io.on('connection', function(client) {
                     }
                     room.playerCount++;
                     spaceFound = true;
+                    io.to(client.roomInfo.roomName).emit('playersReady');
                 }
             }
             if(!spaceFound){
@@ -94,12 +95,6 @@ io.on('connection', function(client) {
             client.emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
         });
 
-        client.on('readyToStart', function(){
-            if(Rooms[client.roomInfo.roomName].player2 != null){
-                io.to(client.roomInfo.roomName).emit('playersReady');
-            }
-        });
-
         client.on('startGame', function(data){
             io.emit('startGame');
             console.log(data);
@@ -114,12 +109,12 @@ io.on('connection', function(client) {
                 room.player1.score++;
                 console.log("player 1 score after add: " + room.player1.score);
                 io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player1.score});
-                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: -ballSpeed, ySpeed: 0});
+                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: -ballSpeed, ySpeed: 0, sound: false});
                 io.to(client.roomInfo.roomName).emit('resetBall');
             }else{
                 room.player2.score++;
                 io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player2.score});
-                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: ballSpeed, ySpeed: 0});
+                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: ballSpeed, ySpeed: 0, sound: false});
                 io.to(client.roomInfo.roomName).emit('resetBall');
             }
         });
@@ -127,11 +122,11 @@ io.on('connection', function(client) {
         client.on('ballCollidedWithBat', function(data){
             var xS = -data.xSpeed;
             var yS = randomNumber();
-            io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: xS, ySpeed: yS});
+            io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: xS, ySpeed: yS, sound: true});
         });
 
         client.on('ballCollidedWithWorld', function(data){
-            io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: data.xSpeed, ySpeed: -data.ySpeed});
+            io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: data.xSpeed, ySpeed: -data.ySpeed, sound:true});
         });
     });
 });
