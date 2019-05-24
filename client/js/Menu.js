@@ -79,12 +79,7 @@ MainMenu.selectNextBat = function(){
     }else{
         MainMenu.selectedBat++;
     }
-    if(globalVars.playerNumber == 1){
-        game.textures.setTexture(MainMenu.player1BatImage, globalVars.bats[MainMenu.selectedBat]);
-    }else{
-        game.textures.setTexture(MainMenu.player2BatImage, globalVars.bats[MainMenu.selectedBat]);
-    }
-    Client.updateBat(MainMenu.selectedBat);
+    Client.updateBat({batNum: MainMenu.selectedBat, playerNum: globalVars.playerNumber});
 };
 
 MainMenu.selectPreviousBat = function(){
@@ -93,12 +88,7 @@ MainMenu.selectPreviousBat = function(){
     }else{
         MainMenu.selectedBat--;
     }
-    if(globalVars.playerNumber == 1){
-        game.textures.setTexture(MainMenu.player1BatImage, globalVars.bats[MainMenu.selectedBat]);
-    }else{
-        game.textures.setTexture(MainMenu.player2BatImage, globalVars.bats[MainMenu.selectedBat]);
-    }
-    Client.updateBat(MainMenu.selectedBat);
+    Client.updateBat({batNum: MainMenu.selectedBat, playerNum: globalVars.playerNumber});
 };
 
 MainMenu.selectNextBall = function(){
@@ -121,11 +111,11 @@ MainMenu.selectPreviousBall = function(){
     Client.updateBall(MainMenu.selectedBall);
 };
 
-MainMenu.updateOpponentsBat = function(batNum){
-    if(globalVars.playerNumber == 1){
-        game.textures.setTexture(MainMenu.player2BatImage, globalVars.bats[batNum]);
+MainMenu.updatePlayersBat = function(data){
+    if(data.playerNum == 1){
+        game.textures.setTexture(MainMenu.player1BatImage, globalVars.bats[data.batNum]);
     }else{
-        game.textures.setTexture(MainMenu.player1BatImage, globalVars.bats[batNum]);
+        game.textures.setTexture(MainMenu.player2BatImage, globalVars.bats[data.batNum]);
     }
 };
 

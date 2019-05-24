@@ -5,8 +5,8 @@ Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
 
-Client.updateBat = function(batNum){
-    Client.socket.emit('updateBat', batNum);
+Client.updateBat = function(data){
+    Client.socket.emit('updateBat', data);
 };
 
 Client.updateBall = function(ballNum){
@@ -55,9 +55,9 @@ Client.socket.on('selectedBat', function(bats){
     GameScreen.setPlayersBats(bats);
 });
 
-Client.socket.on('updateBat', function(batNum){
+Client.socket.on('updateBat', function(data){
     console.log("Received bat update request");
-    MainMenu.updateOpponentsBat(batNum);
+    MainMenu.updatePlayersBat(data);
 });
 
 Client.socket.on('addScore', function(data){

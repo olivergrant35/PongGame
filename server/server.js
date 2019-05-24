@@ -15,10 +15,12 @@ io.on('connection', function(client) {
     //TODO: Fix room issues, can get caught in a loop of disconnecting rooms on player leaving. 
     client.on('newplayer',function() {
         if(Rooms.length != 0){
+            console.log("Rooms found, checking if space.");
             var spaceFound = false;
             for (let i = 0; i < Rooms.length; i++) {
                 const room = Rooms[i];
-                if(room.playerCount = 1){
+                if(room.playerCount == 1){
+                    console.log("Space found, adding client to room.");
                     client.join(room.id);
                     client.roomInfo = {
                         roomName: room.id,
@@ -36,6 +38,7 @@ io.on('connection', function(client) {
                 }
             }
             if(!spaceFound){
+                console.log("No space found, putting client in new room.");
                 createNewRoom();
                 client.join(Rooms[Rooms.length - 1].id);
                 client.roomInfo = {
@@ -50,6 +53,7 @@ io.on('connection', function(client) {
                 }
             }
         }else{
+            console.log("No rooms found, creating new room.");
             createNewRoom();
             client.join(Rooms[0].id);            
             client.roomInfo = {
@@ -78,25 +82,25 @@ io.on('connection', function(client) {
             console.log('Player disconnected. Removing room: ' + client.roomInfo.roomName);
         });
 
-        client.on('updateBat', function(batNum){
+        client.on('updateBat', function(data){
             console.log("Received bat update request.");
-            client.broadcast.emit('updateBat', batNum);
+            io.to(client.roomInfo.roomName).emit('updateBat', data);
         });
 
         client.on('updateBall', function(ballNum){
             console.log("Received ball update request.");
-            client.broadcast.emit('updateBall', ballNum);
+            io.to(client.roomInfo.roomName).emit('updateBall', ballNum);
         });
 
         client.on('getSelectedBat', function(){
             var p1Bat = Rooms[client.roomInfo.roomName].player1.selectedBat;
             var p2Bat = Rooms[client.roomInfo.roomName].player2.selectedBat;
             var ball = Rooms[client.roomInfo.roomName].ball;
-            client.emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
+            io.to(client.roomInfo.roomName).emit('selectedBat', {p1Bat: p1Bat, p2Bat: p2Bat, ball: ball});
         });
 
         client.on('startGame', function(data){
-            io.emit('startGame');
+            io.to(client.roomInfo.roomName).emit('startGame');
             console.log(data);
             Rooms[client.roomInfo.roomName].player1.selectedBat = data.p1Bat;
             Rooms[client.roomInfo.roomName].player2.selectedBat = data.p2Bat;
