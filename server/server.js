@@ -11,8 +11,8 @@ var ballSpeed = 6;
 io.on('connection', function(client) {
     console.log("New user connected.");
     client.emit('connected');
+    console.log(Rooms);
 
-    //TODO: Fix room issues, can get caught in a loop of disconnecting rooms on player leaving. 
     client.on('newplayer',function() {
         if(Rooms.length != 0){
             console.log("Rooms found, checking if space.");
@@ -20,7 +20,6 @@ io.on('connection', function(client) {
             for (let i = 0; i < Rooms.length; i++) {
                 const room = Rooms[i];
                 if(room.playerCount == 1){
-                    console.log("Space found, adding client to room.");
                     client.join(room.id);
                     client.roomInfo = {
                         roomName: room.id,
@@ -34,6 +33,7 @@ io.on('connection', function(client) {
                     }
                     room.playerCount++;
                     spaceFound = true;
+                    console.log("sending players ready.");
                     io.to(client.roomInfo.roomName).emit('playersReady');
                 }
             }
@@ -78,7 +78,7 @@ io.on('connection', function(client) {
 
         client.on('disconnect',function() {
             io.to(client.roomInfo.roomName).emit('playerDisconnected');
-            Rooms.splice(client.roomInfo.roomName, 1);
+            Rooms[client.roomInfo.roomName].playerCount = 0;
             console.log('Player disconnected. Removing room: ' + client.roomInfo.roomName);
         });
 
@@ -100,11 +100,12 @@ io.on('connection', function(client) {
         });
 
         client.on('startGame', function(data){
-            io.to(client.roomInfo.roomName).emit('startGame');
-            console.log(data);
-            Rooms[client.roomInfo.roomName].player1.selectedBat = data.p1Bat;
-            Rooms[client.roomInfo.roomName].player2.selectedBat = data.p2Bat;
-            Rooms[client.roomInfo.roomName].ball = data.ball;
+            if(Rooms[client.roomInfo.roomName].playerCount == 2){
+                io.to(client.roomInfo.roomName).emit('startGame');
+                Rooms[client.roomInfo.roomName].player1.selectedBat = data.p1Bat;
+                Rooms[client.roomInfo.roomName].player2.selectedBat = data.p2Bat;
+                Rooms[client.roomInfo.roomName].ball = data.ball;
+            }
         });
         
         client.on('addScore', function(playerNum){
@@ -112,14 +113,22 @@ io.on('connection', function(client) {
             if(playerNum == 1){                
                 room.player1.score++;
                 console.log("player 1 score after add: " + room.player1.score);
-                io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player1.score});
-                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: -ballSpeed, ySpeed: 0, sound: false});
-                io.to(client.roomInfo.roomName).emit('resetBall');
+                if(room.player1.score == 10){
+                    io.to(client.roomInfo.roomName).emit('gameOver');
+                }else{
+                    io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player1.score});
+                    io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: -ballSpeed, ySpeed: 0, sound: false});
+                    io.to(client.roomInfo.roomName).emit('resetBall');
+                }
             }else{
                 room.player2.score++;
-                io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player2.score});
-                io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: ballSpeed, ySpeed: 0, sound: false});
-                io.to(client.roomInfo.roomName).emit('resetBall');
+                if(room.player2.score == 10){
+                    io.to(client.roomInfo.roomName).emit('gameOver');
+                }else{
+                    io.to(client.roomInfo.roomName).emit('addScore', {playerNumber: playerNum, score: room.player2.score});
+                    io.to(client.roomInfo.roomName).emit('updateBallSpeed', {xSpeed: ballSpeed, ySpeed: 0, sound: false});
+                    io.to(client.roomInfo.roomName).emit('resetBall');
+                }
             }
         });
 

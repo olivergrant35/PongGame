@@ -59,13 +59,9 @@ MainMenu.update = function(){
 };
 
 MainMenu.hostStartGame = function(){
-    if(MainMenu.isGameReady){
-        var p1Bat = MainMenu.selectedBat;
-        var p2Bat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
-        Client.startGame(p1Bat, p2Bat, MainMenu.selectedBall);
-    }else{
-        window.alert("Not all players connected. Please wait and try again.");
-    }
+    var p1Bat = MainMenu.selectedBat;
+    var p2Bat = globalVars.bats.indexOf(MainMenu.player2BatImage.texture.key);
+    Client.startGame(p1Bat, p2Bat, MainMenu.selectedBall);
 };
 
 MainMenu.startGameScreen = function(){
@@ -97,7 +93,6 @@ MainMenu.selectNextBall = function(){
     }else{
         MainMenu.selectedBall++;
     }
-    game.textures.setTexture(MainMenu.ballImage, globalVars.balls[MainMenu.selectedBall]);
     Client.updateBall(MainMenu.selectedBall);
 };
 
@@ -107,7 +102,6 @@ MainMenu.selectPreviousBall = function(){
     }else{
         MainMenu.selectedBall--;
     }
-    game.textures.setTexture(MainMenu.ballImage, globalVars.balls[MainMenu.selectedBall]);
     Client.updateBall(MainMenu.selectedBall);
 };
 

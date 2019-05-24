@@ -17,7 +17,6 @@ GameScreen.preload = function(){
     GameScreen.emitter;
     GameScreen.pointSound;
     GameScreen.bounceSound;
-    //TODO: Change the below to server sided.
     this.load.image('ball1', 'assets/ball1.png');
     this.load.image('ball2', 'assets/ball2.png');
     this.load.image('ball3', 'assets/ball3.png');
@@ -78,8 +77,6 @@ GameScreen.create = async function(){
         scale: {min: 0.7, max: 1},
         on: false
     });
-
-    //TODO: Create particles for bat when ball hits. 
 
     //Sounds
     GameScreen.pointSound = this.sound.add('point');

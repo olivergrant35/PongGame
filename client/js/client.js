@@ -95,9 +95,8 @@ Client.socket.on('playerDisconnected',function(){
     location.reload();
 });
 
-Client.socket.on('gameFull', function(){
-    console.log("Recived Game Full.");
-    globalVars.playerNumber = -1;
+Client.socket.on('gameOver', function(){
+    location.reload();
 });
 
 Client.socket.on('allplayers',function(data){
